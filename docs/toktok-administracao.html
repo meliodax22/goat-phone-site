@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TokTok: administração — Documentação do Goat Phone</title>
+    <meta name="description" content="Painel admin, moderação, pagamentos e reconciliação." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body class="docs-body">
+    <header class="topbar">
+      <a class="brand" href="../index.html"><span class="brand-mark">G</span>Goat Phone</a>
+      <nav class="topnav">
+        <a href="../index.html#apps">Apps</a>
+        <a href="index.html">Documentação</a>
+        <a class="button button-small" href="../index.html#adquirir">Adquirir</a>
+      </nav>
+    </header>
+    <div class="docs-layout">
+      <aside class="docs-nav">
+        <p class="docs-nav-title">Documentação</p>
+        <a href="index.html">Visão geral</a>
+        <a href="instalacao.html">Instalação</a>
+        <a href="configuracao.html">Configuração</a>
+        <a href="apps-proprios.html">Apps próprios</a>
+        <a href="toktok-instalacao.html">TokTok: instalação</a>
+        <a href="toktok-administracao.html" class="active">TokTok: administração</a>
+        <p class="docs-nav-title">Nesta página</p>
+        <a class="docs-toc" href="#acesso-ao-painel">Acesso ao painel</a>
+        <a class="docs-toc" href="#regras-de-toda-ação">Regras de toda ação</a>
+        <a class="docs-toc" href="#moderação">Moderação</a>
+        <a class="docs-toc" href="#dinheiro-e-itens">Dinheiro e itens</a>
+        <a class="docs-toc" href="#anúncios">Anúncios</a>
+        <a class="docs-toc" href="#rotina-sugerida">Rotina sugerida</a>
+      </aside>
+      <main class="docs-content">
+<h1 id="toktok--administração">TokTok — administração</h1>
+<h2 id="acesso-ao-painel">Acesso ao painel</h2>
+<ul><li>Comando no jogo: <code>/toktokadmin</code> (configurável em <code>Config.TokTokAdminCommand</code>).</li><li>O painel só abre com pelo menos uma área liberada, e cada área é checada de novo no servidor a cada ação; esconder a interface não é a proteção.</li><li>A permissão vem do framework pela bridge (<code>bridge.permissions.can</code>). No vRP/Brasil é <code>vRP.hasPermission(user_id, permissão)</code>.</li></ul>
+<p>Permissões padrão (<code>Config.TokTokAdminPermissions</code>):</p>
+<div class="table-wrap"><table><thead><tr><th>Área</th><th>Permissão</th><th>O que libera</th></tr></thead><tbody><tr><td>Saúde</td><td><code>toktok.admin.health</code></td><td>métricas, operações incertas, auditoria</td></tr><tr><td>Moderação</td><td><code>toktok.admin.moderation</code></td><td>denúncias, ações, recursos</td></tr><tr><td>Catálogo</td><td><code>toktok.admin.catalog</code></td><td>produtos e variantes da Loja</td></tr><tr><td>Pedidos</td><td><code>toktok.admin.orders</code></td><td>lista e reembolso</td></tr><tr><td>Moedas e presentes</td><td><code>toktok.admin.wallet</code></td><td>pacotes, presentes, estorno de presente</td></tr><tr><td>Anúncios</td><td><code>toktok.admin.ads</code></td><td>campanhas administrativas</td></tr><tr><td>Músicas</td><td><code>toktok.admin.music</code></td><td>retirar sons</td></tr></tbody></table></div>
+<p>Troque os valores para os grupos/permissões que seu servidor já usa (por exemplo <code>admin.permissao</code>).</p>
+<h2 id="regras-de-toda-ação">Regras de toda ação</h2>
+<ul><li>Toda alteração pede <strong>motivo</strong> (mínimo 3 caracteres).</li><li>A auditoria registra quem fez, quando, motivo, antes e depois; segredos são ocultados e identificadores aparecem mascarados (<code>***1234</code>).</li><li>A bridge também recebe o registro (<code>bridge.audit.record</code>), para logs do próprio framework.</li></ul>
+<h2 id="moderação">Moderação</h2>
+<ul><li><strong>Denúncias</strong> chegam com prioridade por categoria (<code>Config.TokTokModeration.categories</code>) e não duplicam a mesma denúncia aberta do mesmo jogador.</li><li><strong>Ações em conteúdo</strong>: ocultar ou remover post/comentário. <strong>Ações em conta</strong>: strike, limitar recomendação, bloquear LIVE, suspender recurso, suspender monetização, suspender conta, banir — com duração opcional.</li><li><strong>Strikes</strong>: ao atingir <code>strikesToSuspend</code> dentro de <code>strikeWindowMs</code>, a conta é suspensa automaticamente por <code>suspendMs</code>.</li><li><strong>Regras automáticas</strong>: links fora de <code>linkAllowlist</code> e texto repetido (<code>floodRepeats</code> em <code>floodWindowMs</code>) são bloqueados e registrados como ação <code>auto_block</code>, que pode ser revertida.</li><li><strong>Recursos</strong>: o afetado recorre uma vez por ação; aceitar reverte a ação e restaura o estado anterior.</li></ul>
+<h2 id="dinheiro-e-itens">Dinheiro e itens</h2>
+<ul><li>Compras na Loja, recarga de moedas, saques e Promover cobram/creditam o <strong>personagem conectado</strong> pela bridge.</li><li>Cada chamada ao framework passa por um registro durável. Se o servidor cair no meio, a operação aparece em <strong>Saúde › Operações incertas</strong> e não é repetida sozinha:
+<ol><li>Confira no framework (saldo/inventário do jogador) se ela aconteceu.</li><li>Clique &quot;Confirmar que ocorreu&quot; ou &quot;Confirmar que não ocorreu&quot; com o motivo.</li><li>A reconciliação (a cada 30 s) retoma o pedido ou saque com o resultado informado.</li></ol></li><li><strong>Reembolso</strong> de pedido entregue credita o comprador conectado; com ele offline, o reembolso falha e pode ser repetido depois.</li><li><strong>Estorno de presente</strong> devolve as moedas a quem enviou e move o ganho do criador para &quot;estornado&quot;.</li></ul>
+<h2 id="anúncios">Anúncios</h2>
+<ul><li>Campanhas administrativas usam um post existente como criativo, com produto opcional (botão &quot;Comprar agora&quot;).</li><li>Nascem pausadas; ative em Anúncios. O orçamento é virtual (impressões × <code>impressionCost</code>).</li><li>O Promover dos criadores é pago pelo personagem e aparece na mesma lista.</li></ul>
+<h2 id="rotina-sugerida">Rotina sugerida</h2>
+<div class="table-wrap"><table><thead><tr><th>Frequência</th><th>O que olhar</th></tr></thead><tbody><tr><td>Diária</td><td>Saúde: operações incertas, pedidos com falha, erros recentes</td></tr><tr><td>Diária</td><td>Moderação: denúncias de prioridade alta e recursos abertos</td></tr><tr><td>Semanal</td><td>Auditoria de reembolsos, estornos e saques; callbacks mais lentos</td></tr></tbody></table></div>
+      </main>
+    </div>
+    <footer class="footer">
+      <span>© Goat Phone</span>
+      <span>Feito para FiveM</span>
+    </footer>
+  </body>
+</html>

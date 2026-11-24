@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Apps próprios — Documentação do Goat Phone</title>
+    <meta name="description" content="Crie apps do seu servidor com HTML, CSS e JavaScript usando o SDK." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body class="docs-body">
+    <header class="topbar">
+      <a class="brand" href="../index.html"><span class="brand-mark">G</span>Goat Phone</a>
+      <nav class="topnav">
+        <a href="../index.html#apps">Apps</a>
+        <a href="index.html">Documentação</a>
+        <a class="button button-small" href="../index.html#adquirir">Adquirir</a>
+      </nav>
+    </header>
+    <div class="docs-layout">
+      <aside class="docs-nav">
+        <p class="docs-nav-title">Documentação</p>
+        <a href="index.html">Visão geral</a>
+        <a href="instalacao.html">Instalação</a>
+        <a href="configuracao.html">Configuração</a>
+        <a href="apps-proprios.html" class="active">Apps próprios</a>
+        <a href="toktok-instalacao.html">TokTok: instalação</a>
+        <a href="toktok-administracao.html">TokTok: administração</a>
+        <p class="docs-nav-title">Nesta página</p>
+        <a class="docs-toc" href="#começo-rápido">Começo rápido</a>
+        <a class="docs-toc" href="#estrutura-de-um-app">Estrutura de um app</a>
+        <a class="docs-toc" href="#registrar-o-app">Registrar o app</a>
+        <a class="docs-toc" href="#exports">Exports</a>
+        <a class="docs-toc" href="#sdk-da-página">SDK da página</a>
+        <a class="docs-toc" href="#falando-com-o-seu-lua">Falando com o seu Lua</a>
+        <a class="docs-toc" href="#segurança">Segurança</a>
+        <a class="docs-toc" href="#testar-no-navegador">Testar no navegador</a>
+        <a class="docs-toc" href="#perguntas-comuns">Perguntas comuns</a>
+      </aside>
+      <main class="docs-content">
+<h1 id="apps-próprios-no-goat-phone">Apps próprios no Goat Phone</h1>
+<p>O Goat Phone deixa você criar apps que aparecem na tela inicial do celular como qualquer app nativo: ícone, nome, pastas, busca e notificações. O app mora num recurso FiveM seu, separado do <code>goat-phone</code>. Você não mexe no código do celular e não perde nada ao atualizar.</p>
+<p>O app é uma página web (HTML, CSS e JavaScript, com ou sem framework) que o celular abre dentro da janela do app. A página conversa com o celular pelo SDK <code>goat-phone-sdk.js</code> e com o seu próprio Lua pelos callbacks NUI do seu recurso.</p>
+<pre><code>sua página (iframe)  ──SDK──▶  Goat Phone  ──▶  notificações, câmera, contatos, GPS...
+        │                          ▲
+        └──fetchNui──▶ seu client.lua ──▶ seu server.lua ──sendAppMessage──┘</code></pre>
+<h2 id="começo-rápido">Começo rápido</h2>
+<ol><li>Copie <code>examples/goat-phone-app-template</code> para a pasta <code>resources</code> do servidor.</li><li>Coloque <code>ensure goat-phone-app-template</code> no <code>server.cfg</code>, depois do <code>ensure goat-phone</code>.</li><li>Entre no servidor e abra o celular: o app <strong>Modelo</strong> aparece na segunda página da tela inicial.</li></ol>
+<p>O template mostra todas as funções do SDK. Para criar o seu app, renomeie a pasta, troque o <code>id</code> e o nome em <code>server.lua</code> e edite os arquivos de <code>ui/</code>.</p>
+<h2 id="estrutura-de-um-app">Estrutura de um app</h2>
+<pre><code>meu-app/
+├── fxmanifest.lua
+├── server.lua        registra o app e guarda as regras
+├── client.lua        callbacks NUI chamados pela página
+└── ui/
+    ├── index.html
+    ├── app.js
+    ├── styles.css
+    ├── icon.png      ícone quadrado, de preferência 180×180 ou maior
+    └── goat-phone-sdk.js</code></pre>
+<p>Todo arquivo que a página usa precisa estar em <code>files</code> no <code>fxmanifest.lua</code>. Não use <code>ui_page</code>: a página é aberta pelo celular, não pelo seu recurso.</p>
+<pre><code>fx_version 'cerulean'
+game 'gta5'
+lua54 'yes'
+
+dependency 'goat-phone'
+
+files {
+  'ui/index.html',
+  'ui/app.js',
+  'ui/styles.css',
+  'ui/icon.png',
+  'ui/goat-phone-sdk.js',
+}
+
+client_script 'client.lua'
+server_script 'server.lua'</code></pre>
+<h2 id="registrar-o-app">Registrar o app</h2>
+<p>O registro é feito no servidor. Registre quando o seu recurso inicia e de novo sempre que o <code>goat-phone</code> reiniciar:</p>
+<pre><code>local function register()
+  local ok, err = exports['goat-phone']:registerApp({
+    id = 'meu-banco',
+    name = { ['pt-br'] = 'Banco', en = 'Bank', es = 'Banco' },
+    description = 'Saldo e transferências',
+    icon = 'ui/icon.png',
+    ui = 'ui/index.html',
+    page = 2,
+  })
+  if not ok then
+    print('app recusado: ' .. err)
+  end
+end
+
+AddEventHandler('onResourceStart', function(resource)
+  if resource == 'goat-phone' then
+    register()
+  end
+end)
+
+CreateThread(function()
+  if GetResourceState('goat-phone') == 'started' then
+    register()
+  end
+end)</code></pre>
+<h3 id="campos">Campos</h3>
+<div class="table-wrap"><table><thead><tr><th>Campo</th><th>Obrigatório</th><th>Descrição</th></tr></thead><tbody><tr><td><code>id</code></td><td>sim</td><td>3 a 32 caracteres, só letras minúsculas, números e hífen. Não pode ser o id de um app nativo nem de um app de outro recurso.</td></tr><tr><td><code>name</code></td><td>sim</td><td>Texto (<code>'Banco'</code>) ou tabela por idioma (<code>pt-br</code>, <code>en</code>, <code>es</code>). Sem o idioma do jogador, usa <code>pt-br</code>, depois o primeiro que existir. Até 40 caracteres.</td></tr><tr><td><code>ui</code></td><td>sim</td><td>Caminho da página dentro do seu recurso (<code>'ui/index.html'</code>) ou uma URL <code>https://</code> completa.</td></tr><tr><td><code>icon</code></td><td>não</td><td>Caminho ou URL <code>https://</code> da imagem do ícone. Sem ícone, o celular desenha um ícone genérico na cor <code>iconColor</code>.</td></tr><tr><td><code>iconColor</code></td><td>não</td><td>Cor do ícone genérico em <code>#RRGGBB</code>. Padrão <code>#5E5CE6</code>.</td></tr><tr><td><code>description</code></td><td>não</td><td>Texto curto, até 120 caracteres.</td></tr><tr><td><code>page</code></td><td>não</td><td>Página da tela inicial onde o app aparece pela primeira vez (começa em 1). Depois o jogador move o ícone como quiser.</td></tr><tr><td><code>darkChrome</code></td><td>não</td><td><code>true</code> quando o app tem fundo escuro fixo: a barra de status fica clara.</td></tr><tr><td><code>permission</code></td><td>não</td><td>Permissão conferida pela bridge do framework (permissão do vRP; ACE ou grupos de admin no ESX e no QB). Sem a permissão, o app nem aparece. No modo standalone, apps com <code>permission</code> ficam escondidos.</td></tr><tr><td><code>allow</code></td><td>não</td><td>Função do seu recurso que recebe o <code>source</code> e devolve <code>true</code> para mostrar o app. Use para emprego, item, horário ou qualquer regra sua. Se der erro, o app fica escondido.</td></tr></tbody></table></div>
+<p>O retorno é <code>true</code> ou <code>false, codigo</code>:</p>
+<ul><li><code>invalid_app</code>: algum campo inválido (o motivo mais comum é <code>id</code> com maiúscula ou espaço, ou <code>ui</code> com <code>http://</code>).</li><li><code>app_conflict</code>: o <code>id</code> já é de um app nativo ou de outro recurso.</li></ul>
+<p>Registrar de novo com o mesmo <code>id</code>, pelo mesmo recurso, substitui a definição. Quando o seu recurso para, o app some sozinho da tela de todos.</p>
+<h3 id="exemplo-de-app-só-para-um-emprego">Exemplo de app só para um emprego</h3>
+<pre><code>allow = function(source)
+  local Player = exports['qb-core']:GetCoreObject().Functions.GetPlayer(source)
+  return Player ~= nil and Player.PlayerData.job.name == 'police'
+end</code></pre>
+<p>A lista de apps de cada jogador é recalculada toda vez que ele abre o celular. Se o emprego mudou com o celular aberto e você quer atualizar na hora, chame <code>exports['goat-phone']:refreshApps(source)</code>.</p>
+<h2 id="exports">Exports</h2>
+<p>Servidor:</p>
+<div class="table-wrap"><table><thead><tr><th>Export</th><th>Descrição</th></tr></thead><tbody><tr><td><code>registerApp(definicao)</code></td><td>Registra ou atualiza um app.</td></tr><tr><td><code>unregisterApp(id)</code></td><td>Remove um app do seu recurso.</td></tr><tr><td><code>refreshApps(source?)</code></td><td>Reenvia a lista de apps a um jogador ou, sem <code>source</code>, a todos.</td></tr><tr><td><code>sendAppMessage(source, appId, evento, dados)</code></td><td>Entrega <code>dados</code> à página do app aberta no celular do jogador.</td></tr><tr><td><code>notify(source, notificacao)</code></td><td>Notificação do celular. Use <code>appId</code> igual ao <code>id</code> do seu app para mostrar o seu ícone: <code>{ appId = 'meu-banco', title = 'Pix recebido', body = 'R$ 250,00' }</code>.</td></tr><tr><td><code>getPhoneNumber(source)</code></td><td>Número do celular do jogador.</td></tr></tbody></table></div>
+<p>Cliente:</p>
+<div class="table-wrap"><table><thead><tr><th>Export</th><th>Descrição</th></tr></thead><tbody><tr><td><code>sendAppMessage(appId, evento, dados)</code></td><td>Entrega <code>dados</code> à página do app aberta no celular deste jogador.</td></tr></tbody></table></div>
+<p>Mensagens chegam à página só quando o app está aberto. Para dados que precisam estar lá ao abrir, a página pede ao seu Lua assim que carrega (veja <code>counter:get</code> no template).</p>
+<h2 id="sdk-da-página">SDK da página</h2>
+<p>Inclua o SDK antes do seu script:</p>
+<pre><code>&lt;script src=&quot;goat-phone-sdk.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;app.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p>O SDK cria <code>window.GoatPhone</code>. Para TypeScript, copie também <code>goat-phone-sdk.d.ts</code>.</p>
+<p>Ao carregar, o SDK já:</p>
+<ul><li>avisa o celular que a página está pronta (sem isso, depois de 10 segundos o celular mostra erro com botão de tentar de novo);</li><li>coloca <code>data-theme=&quot;light&quot;</code> ou <code>&quot;dark&quot;</code> e a classe <code>dark</code> no <code>&lt;html&gt;</code>, e atualiza quando o jogador troca o tema;</li><li>define <code>--goat-safe-top</code> e <code>--goat-safe-bottom</code>, a altura da barra de status e do indicador inicial, para o conteúdo não ficar por baixo deles;</li><li>libera o teclado para a página quando um campo de texto ganha foco e devolve o controle ao jogo quando perde. Sem isso o personagem andaria enquanto o jogador digita.</li></ul>
+<h3 id="métodos">Métodos</h3>
+<p>Todos devolvem <code>Promise</code>.</p>
+<div class="table-wrap"><table><thead><tr><th>Método</th><th>Resultado</th></tr></thead><tbody><tr><td><code>GoatPhone.ready()</code></td><td><code>{ appId, theme, locale, phoneNumber, safeArea }</code></td></tr><tr><td><code>GoatPhone.getContext()</code></td><td>o mesmo objeto, ou <code>null</code> antes do <code>ready</code></td></tr><tr><td><code>GoatPhone.close()</code></td><td>fecha o app e volta para a tela inicial</td></tr><tr><td><code>GoatPhone.toast(texto)</code></td><td>aviso curto na parte de baixo da tela</td></tr><tr><td><code>GoatPhone.notify({ title, body })</code></td><td>notificação do celular com o ícone do app; devolve <code>{ id }</code></td></tr><tr><td><code>GoatPhone.contacts.list()</code></td><td><code>[{ id, name, number, favorite }]</code></td></tr><tr><td><code>GoatPhone.photos.pick()</code></td><td>abre a Galeria; devolve <code>{ url, width, height }</code> ou <code>null</code> se o jogador cancelar</td></tr><tr><td><code>GoatPhone.camera.takePhoto()</code></td><td>abre a câmera; a foto vai para a Galeria e volta como <code>{ url, width, height }</code>, ou <code>null</code></td></tr><tr><td><code>GoatPhone.location.get()</code></td><td><code>{ x, y, label }</code> da posição do jogador</td></tr><tr><td><code>GoatPhone.location.setWaypoint(x, y)</code></td><td>marca o ponto no GPS</td></tr><tr><td><code>GoatPhone.phone.call(numero)</code></td><td>inicia uma ligação</td></tr><tr><td><code>GoatPhone.messages.compose(numero)</code></td><td>abre a conversa no app Mensagens</td></tr><tr><td><code>GoatPhone.fetchNui(evento, dados)</code></td><td>chama o <code>RegisterNUICallback(evento)</code> do seu recurso e devolve a resposta</td></tr></tbody></table></div>
+<h3 id="eventos">Eventos</h3>
+<pre><code>GoatPhone.on('theme', ({ theme }) =&gt; {})
+GoatPhone.on('locale', ({ locale }) =&gt; {})
+GoatPhone.on('message', ({ event, data }) =&gt; {})
+GoatPhone.onMessage('saldo', (data) =&gt; {})</code></pre>
+<p><code>on</code> e <code>onMessage</code> devolvem uma função que cancela a inscrição.</p>
+<h3 id="erros">Erros</h3>
+<p>Quando algo falha, a promessa é rejeitada com um <code>GoatPhoneError</code> que tem <code>code</code>:</p>
+<div class="table-wrap"><table><thead><tr><th>Código</th><th>Quando</th></tr></thead><tbody><tr><td><code>not_active</code></td><td>o app não está na frente (celular fechado, bloqueado ou com a Central de Controle aberta)</td></tr><tr><td><code>invalid_request</code></td><td>parâmetro inválido, como texto vazio no <code>toast</code></td></tr><tr><td><code>unknown_method</code></td><td>método que esta versão do celular não conhece</td></tr><tr><td><code>unavailable</code></td><td>o celular não conseguiu fazer a ação, ou a página foi aberta fora do celular</td></tr><tr><td><code>timeout</code></td><td>o celular não respondeu em 15 segundos</td></tr></tbody></table></div>
+<pre><code>try {
+  await GoatPhone.toast('Salvo')
+} catch (error) {
+  console.warn(error.code)
+}</code></pre>
+<h2 id="falando-com-o-seu-lua">Falando com o seu Lua</h2>
+<p>A página chama os callbacks NUI do seu próprio recurso:</p>
+<pre><code>const saldo = await GoatPhone.fetchNui('banco:saldo', {})</code></pre>
+<p>Exemplo com <code>ox_lib</code> para buscar o valor no servidor:</p>
+<pre><code>RegisterNUICallback('banco:saldo', function(_, cb)
+  local saldo = lib.callback.await('meu-banco:saldo', false)
+  cb({ valor = saldo })
+end)</code></pre>
+<p>Responda sempre o <code>cb</code>, inclusive em erro, senão a promessa da página não termina.</p>
+<p>Para o servidor avisar a página (pagamento recebido, pedido aceito), use <code>sendAppMessage</code>:</p>
+<pre><code>exports['goat-phone']:sendAppMessage(source, 'meu-banco', 'saldo', { valor = 1500 })</code></pre>
+<pre><code>GoatPhone.onMessage('saldo', ({ valor }) =&gt; mostrarSaldo(valor))</code></pre>
+<h2 id="segurança">Segurança</h2>
+<ul><li>Trate tudo que vem da página como entrada do jogador. Valide no servidor quem pode fazer o quê; o <code>allow</code> só decide quem vê o ícone.</li><li>O celular identifica o app pela janela de onde a mensagem veio, não por um campo que a página informe. Uma página não consegue se passar por outra.</li><li>Contatos, fotos, câmera e localização só respondem com o app aberto e na frente.</li><li>Prefira os arquivos do próprio recurso. URL externa (<code>https://...</code>) funciona, mas depende de o site permitir ser aberto num iframe e deixa o carregamento sujeito à internet do jogador.</li></ul>
+<h2 id="testar-no-navegador">Testar no navegador</h2>
+<p>No repositório do celular, <code>pnpm dev</code> abre o celular em <code>http://localhost:5180</code> com dados de exemplo, e o template aparece na segunda página. Edite os arquivos em <code>examples/goat-phone-app-template/ui/</code> e recarregue o app. Fora do jogo, <code>fetchNui</code> rejeita com <code>unavailable</code>; o template mostra como simular a resposta nesse caso.</p>
+<h2 id="perguntas-comuns">Perguntas comuns</h2>
+<p><strong>O app não aparece.</strong> Veja o console do servidor: o <code>goat-phone</code> imprime <code>app de &lt;recurso&gt; recusado: &lt;codigo&gt;</code>. Confira também se o seu recurso inicia depois do <code>goat-phone</code> e se o <code>allow</code> devolve <code>true</code> para o seu personagem.</p>
+<p><strong>A página abre em branco ou com erro.</strong> Confirme que todos os arquivos estão em <code>files</code> no <code>fxmanifest.lua</code> e que os caminhos no HTML são relativos (<code>app.js</code>, não <code>/app.js</code>). Use F8 para ver erros da página.</p>
+<p><strong>Posso usar React, Vue ou Svelte?</strong> Sim. Gere o build com caminhos relativos (no Vite, <code>base: './'</code>), coloque a pasta gerada em <code>files</code> e aponte <code>ui</code> para o <code>index.html</code> dela.</p>
+<p><strong>O jogador anda enquanto digita.</strong> O SDK só reconhece <code>input</code>, <code>textarea</code> e elementos <code>contenteditable</code>. Campos desenhados de outro jeito precisam usar um desses por baixo.</p>
+      </main>
+    </div>
+    <footer class="footer">
+      <span>© Goat Phone</span>
+      <span>Feito para FiveM</span>
+    </footer>
+  </body>
+</html>

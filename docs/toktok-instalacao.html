@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TokTok: instalação — Documentação do Goat Phone</title>
+    <meta name="description" content="Provedor de mídia, busca de músicas e primeiros passos do TokTok." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body class="docs-body">
+    <header class="topbar">
+      <a class="brand" href="../index.html"><span class="brand-mark">G</span>Goat Phone</a>
+      <nav class="topnav">
+        <a href="../index.html#apps">Apps</a>
+        <a href="index.html">Documentação</a>
+        <a class="button button-small" href="../index.html#adquirir">Adquirir</a>
+      </nav>
+    </header>
+    <div class="docs-layout">
+      <aside class="docs-nav">
+        <p class="docs-nav-title">Documentação</p>
+        <a href="index.html">Visão geral</a>
+        <a href="instalacao.html">Instalação</a>
+        <a href="configuracao.html">Configuração</a>
+        <a href="apps-proprios.html">Apps próprios</a>
+        <a href="toktok-instalacao.html" class="active">TokTok: instalação</a>
+        <a href="toktok-administracao.html">TokTok: administração</a>
+        <p class="docs-nav-title">Nesta página</p>
+        <a class="docs-toc" href="#requisitos">Requisitos</a>
+        <a class="docs-toc" href="#1-recurso-do-celular">1. Recurso do celular</a>
+        <a class="docs-toc" href="#2-provedor-de-mídia-local">2. Provedor de mídia local</a>
+        <a class="docs-toc" href="#3-ligar-o-toktok">3. Ligar o TokTok</a>
+        <a class="docs-toc" href="#4-primeiros-passos-de-administração">4. Primeiros passos de administração</a>
+        <a class="docs-toc" href="#configurações-principais-configlua">Configurações principais (<code>config.lua</code>)</a>
+        <a class="docs-toc" href="#problemas-comuns">Problemas comuns</a>
+      </aside>
+      <main class="docs-content">
+<h1 id="toktok--instalação">TokTok — instalação</h1>
+<p>Guia para quem compra o Goat Phone e vai ligar o TokTok completo. Para atualizar um servidor que já roda o celular, siga também toktok-upgrade.md.</p>
+<h2 id="requisitos">Requisitos</h2>
+<div class="table-wrap"><table><thead><tr><th>Item</th><th>Versão / observação</th></tr></thead><tbody><tr><td>FiveM (FXServer)</td><td>artefato recente com Lua 5.4</td></tr><tr><td>oxmysql</td><td>iniciado antes do <code>goat-phone</code></td></tr><tr><td>MySQL ou MariaDB</td><td>usuário com permissão de <code>CREATE</code> e <code>ALTER</code></td></tr><tr><td>Node.js</td><td>22 LTS, na mesma máquina do servidor (provedor de mídia local)</td></tr><tr><td>Framework</td><td>vRP/Brasil, ESX, QB ou standalone (pela bridge do celular)</td></tr></tbody></table></div>
+<p>O provedor de mídia local (<code>apps/media-local</code>) recebe uploads, gera vídeos, faz o render do estúdio e a LIVE (mediasoup). Ele não precisa de Docker nem de FFmpeg instalado à parte: tudo vem do <code>pnpm install</code>.</p>
+<h2 id="1-recurso-do-celular">1. Recurso do celular</h2>
+<ol><li>Copie a pasta <code>goat-phone</code> para <code>resources/</code> (o nome da pasta precisa ser exatamente <code>goat-phone</code>).</li><li>No <code>server.cfg</code>:
+<pre><code>ensure oxmysql
+ensure goat-phone
+set goat_phone_media_secret &quot;troque-por-um-segredo-longo-e-aleatorio&quot;</code></pre></li></ol>
+<ol><li>Inicie o servidor uma vez e confira no console as linhas <code>[goat-phone] migration ... aplicada</code> (17 na instalação limpa).</li></ol>
+<h2 id="2-provedor-de-mídia-local">2. Provedor de mídia local</h2>
+<p>Na pasta <code>apps/media-local</code> do pacote:</p>
+<pre><code>pnpm install</code></pre>
+<pre><code>pnpm start</code></pre>
+<p>Variáveis de ambiente (defina antes do <code>pnpm start</code> ou num gerenciador como PM2/NSSM):</p>
+<div class="table-wrap"><table><thead><tr><th>Variável</th><th>Padrão</th><th>Para quê</th></tr></thead><tbody><tr><td><code>MEDIA_SHARED_SECRET</code></td><td>—</td><td><strong>obrigatória</strong>, igual ao <code>goat_phone_media_secret</code></td></tr><tr><td><code>MEDIA_PUBLIC_URL</code></td><td><code>http://127.0.0.1:4319</code></td><td>URL que os jogadores usam para baixar vídeos; em produção use o IP público ou domínio</td></tr><tr><td><code>MEDIA_HOST</code> / <code>MEDIA_PORT</code></td><td><code>127.0.0.1</code> / <code>4319</code></td><td>onde a API escuta</td></tr><tr><td><code>MEDIA_DATA_DIR</code></td><td><code>./data</code></td><td>onde os arquivos ficam guardados</td></tr><tr><td><code>MEDIA_LIVE_ANNOUNCED_ADDRESS</code></td><td>—</td><td>IP público anunciado para a LIVE (necessário fora da rede local)</td></tr><tr><td><code>MEDIA_LIVE_RTC_MIN_PORT</code> / <code>MEDIA_LIVE_RTC_MAX_PORT</code></td><td><code>40000</code> / <code>40999</code></td><td>portas UDP/TCP da LIVE; libere no firewall</td></tr><tr><td><code>MEDIA_LIVE_MAX_VIEWERS</code></td><td><code>500</code></td><td>espectadores por sala</td></tr></tbody></table></div>
+<p>No <code>config.lua</code> do servidor, <code>Config.MediaLocalUrl</code> aponta para a API (padrão <code>http://127.0.0.1:4319</code>).</p>
+<p>Firewall: libere a porta HTTP de <code>MEDIA_PUBLIC_URL</code> e a faixa RTC da LIVE. A API (<code>/uploads</code>, <code>/renders</code>, <code>/metrics</code>) exige o segredo compartilhado; não exponha o segredo no cliente.</p>
+<h2 id="3-ligar-o-toktok">3. Ligar o TokTok</h2>
+<p>Em <code>config.lua</code>:</p>
+<pre><code>Config.TokTokEnabled = true</code></pre>
+<p>Reinicie (<code>restart goat-phone</code>). Com a flag desligada o app fica indisponível e as tabelas permanecem intactas.</p>
+<h2 id="4-primeiros-passos-de-administração">4. Primeiros passos de administração</h2>
+<ol><li>Dê a permissão de administração (veja <a href="toktok-administracao.html">TokTok: administração</a>).</li><li>Abra <code>/toktokadmin</code> → <strong>Moedas e presentes</strong>: crie pacotes de moedas e presentes (o catálogo começa vazio).</li><li><strong>Catálogo</strong>: cadastre produtos e variantes com o nome do item do inventário do seu framework.</li><li><strong>Saúde</strong>: provedor de mídia &quot;Disponível&quot; e nenhuma operação incerta.</li></ol>
+<h2 id="configurações-principais-configlua">Configurações principais (<code>config.lua</code>)</h2>
+<div class="table-wrap"><table><thead><tr><th>Chave</th><th>Para quê</th></tr></thead><tbody><tr><td><code>Config.TokTokMonetization</code></td><td>valor da moeda, taxa da plataforma, retenção, limite diário de presentes, preço da assinatura, regras de saque</td></tr><tr><td><code>Config.TokTokAds</code></td><td>custo por impressão, intervalo no feed, frequência, pacotes do Promover</td></tr><tr><td><code>Config.TokTokModeration</code></td><td>strikes, suspensão automática, links permitidos, anti-spam, prioridade por categoria de denúncia</td></tr><tr><td><code>Config.TokTokAdminPermissions</code></td><td>permissão do framework exigida por área do painel</td></tr><tr><td><code>Config.TokTokAccountRetentionMs</code></td><td>prazo até a exclusão definitiva da conta (padrão 30 dias)</td></tr><tr><td><code>Config.TokTokRestrictedWords</code></td><td>palavras escondidas pelo modo restrito</td></tr><tr><td><code>Config.TokTokAdminCommand</code></td><td>comando do painel (padrão <code>toktokadmin</code>)</td></tr></tbody></table></div>
+<h2 id="problemas-comuns">Problemas comuns</h2>
+<div class="table-wrap"><table><thead><tr><th>Sintoma</th><th>Causa provável</th></tr></thead><tbody><tr><td><code>provedor de mídia local_node indisponível</code> no boot</td><td>media-local parado, <code>Config.MediaLocalUrl</code> errado ou segredo diferente</td></tr><tr><td>Vídeos não carregam para outros jogadores</td><td><code>MEDIA_PUBLIC_URL</code> aponta para <code>127.0.0.1</code></td></tr><tr><td>LIVE abre mas ninguém vê</td><td><code>MEDIA_LIVE_ANNOUNCED_ADDRESS</code> ausente ou portas RTC bloqueadas</td></tr><tr><td>Compra fica &quot;em verificação&quot;</td><td>queda durante cobrança; resolva em Saúde › Operações incertas</td></tr></tbody></table></div>
+      </main>
+    </div>
+    <footer class="footer">
+      <span>© Goat Phone</span>
+      <span>Feito para FiveM</span>
+    </footer>
+  </body>
+</html>

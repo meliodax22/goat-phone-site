@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Instalação — Documentação do Goat Phone</title>
+    <meta name="description" content="Requisitos, framework, item, fotos, permissões e atualização." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body class="docs-body">
+    <header class="topbar">
+      <a class="brand" href="../index.html"><span class="brand-mark">G</span>Goat Phone</a>
+      <nav class="topnav">
+        <a href="../index.html#apps">Apps</a>
+        <a href="index.html">Documentação</a>
+        <a class="button button-small" href="../index.html#adquirir">Adquirir</a>
+      </nav>
+    </header>
+    <div class="docs-layout">
+      <aside class="docs-nav">
+        <p class="docs-nav-title">Documentação</p>
+        <a href="index.html">Visão geral</a>
+        <a href="instalacao.html" class="active">Instalação</a>
+        <a href="configuracao.html">Configuração</a>
+        <a href="apps-proprios.html">Apps próprios</a>
+        <a href="toktok-instalacao.html">TokTok: instalação</a>
+        <a href="toktok-administracao.html">TokTok: administração</a>
+        <p class="docs-nav-title">Nesta página</p>
+        <a class="docs-toc" href="#requisitos">Requisitos</a>
+        <a class="docs-toc" href="#1-copiar-o-recurso">1. Copiar o recurso</a>
+        <a class="docs-toc" href="#2-framework">2. Framework</a>
+        <a class="docs-toc" href="#3-item-do-celular">3. Item do celular</a>
+        <a class="docs-toc" href="#4-fotos-e-vídeos">4. Fotos e vídeos</a>
+        <a class="docs-toc" href="#5-permissões-de-administração">5. Permissões de administração</a>
+        <a class="docs-toc" href="#6-operadora">6. Operadora</a>
+        <a class="docs-toc" href="#7-cobertura-e-modo-avião">7. Cobertura e modo avião</a>
+        <a class="docs-toc" href="#8-wi-fi">8. Wi-Fi</a>
+        <a class="docs-toc" href="#9-bateria">9. Bateria</a>
+        <a class="docs-toc" href="#10-integração-com-outros-recursos">10. Integração com outros recursos</a>
+        <a class="docs-toc" href="#11-ajustes-que-dependem-do-servidor">11. Ajustes que dependem do servidor</a>
+        <a class="docs-toc" href="#12-atualizar">12. Atualizar</a>
+      </aside>
+      <main class="docs-content">
+<h1 id="goat-phone--instalação">Goat Phone — instalação</h1>
+<p>Guia para quem compra o Goat Phone e vai colocá-lo no servidor. Para a lista completa de opções do <code>config.lua</code>, veja <a href="configuracao.html">Configuração</a>. O TokTok tem guias próprios em <a href="toktok-instalacao.html">TokTok: instalação</a>.</p>
+<h2 id="requisitos">Requisitos</h2>
+<div class="table-wrap"><table><thead><tr><th>Item</th><th>Obrigatório</th><th>Observação</th></tr></thead><tbody><tr><td>FXServer recente com Lua 5.4</td><td>sim</td><td>o manifesto usa <code>lua54 'yes'</code></td></tr><tr><td><a href="https://github.com/overextended/oxmysql" target="_blank" rel="noopener">oxmysql</a></td><td>sim</td><td>iniciado antes do <code>goat-phone</code>; sem ele o celular não sobe</td></tr><tr><td>MySQL ou MariaDB</td><td>sim</td><td>o usuário do banco precisa de <code>CREATE</code> e <code>ALTER</code>, porque as migrations rodam sozinhas</td></tr><tr><td>Framework</td><td>não</td><td>vRP Brasil, vRP Creative, ESX Legacy ou QBCore pela bridge; sem nenhum, roda em modo standalone</td></tr><tr><td>pma-voice</td><td>não</td><td>voz das ligações; sem ele a ligação conecta, mas sem áudio</td></tr><tr><td>ox_inventory</td><td>não</td><td>usado automaticamente no ESX e no QBCore quando está iniciado</td></tr><tr><td>Node.js 22</td><td>só para o TokTok</td><td>provedor de mídia local; veja o guia do TokTok</td></tr></tbody></table></div>
+<h2 id="1-copiar-o-recurso">1. Copiar o recurso</h2>
+<ol><li>Copie a pasta para <code>resources/</code> com o nome exato <code>goat-phone</code>. O nome define a URL dos callbacks da interface e das fotos locais; com outro nome o celular abre em branco.</li><li>No <code>server.cfg</code>, depois do framework e do banco:
+<pre><code>ensure oxmysql
+ensure goat-phone</code></pre></li></ol>
+<ol><li>Inicie o servidor e confira no console:
+<ul><li><code>[goat-phone] migration ... aplicada</code> para cada migration na primeira vez;</li><li><code>[goat-phone] pronto: bridge &lt;nome&gt;, armazenamento &lt;local|fivemanage&gt;</code>.</li></ul></li></ol>
+<p>Se aparecer <code>falha ao iniciar</code>, a mensagem seguinte diz o motivo, por exemplo bridge incompleta ou oxmysql parado.</p>
+<h2 id="2-framework">2. Framework</h2>
+<p>Com <code>Config.Framework = 'auto'</code>, o celular detecta o framework pelo recurso iniciado, nesta ordem: <code>es_extended</code>, <code>qb-core</code>, <code>vrp</code>. Para forçar, use <code>'esx'</code>, <code>'qbcore'</code>, <code>'vrp'</code> (vRP Brasil), <code>'vrp_creative'</code> ou <code>'standalone'</code>.</p>
+<div class="table-wrap"><table><thead><tr><th>Framework</th><th>Dono dos dados</th><th>Número de telefone</th></tr></thead><tbody><tr><td>ESX Legacy</td><td><code>identifier</code> do personagem</td><td>coluna <code>users.phone_number</code>; sem ela, o celular gera um número</td></tr><tr><td>QBCore</td><td><code>citizenid</code></td><td><code>charinfo.phone</code></td></tr><tr><td>vRP Brasil / Creative</td><td>passaporte</td><td>telefone da identidade do personagem</td></tr><tr><td>Standalone</td><td>license do jogador</td><td>gerado pelo celular</td></tr></tbody></table></div>
+<p>Contas de dinheiro usadas pela Darkweb e pelo TokTok:</p>
+<div class="table-wrap"><table><thead><tr><th>Conta</th><th>ESX</th><th>QBCore</th><th>vRP</th></tr></thead><tbody><tr><td><code>wallet</code></td><td><code>money</code></td><td><code>cash</code></td><td>dinheiro em mãos (Creative soma o banco)</td></tr><tr><td><code>bank</code></td><td><code>bank</code></td><td><code>bank</code></td><td>banco</td></tr><tr><td><code>dirty</code></td><td><code>black_money</code></td><td>item de <code>Config.Bridge.dirtyMoneyItem</code></td><td>item de dinheiro sujo</td></tr></tbody></table></div>
+<h2 id="3-item-do-celular">3. Item do celular</h2>
+<p><code>Config.RequireItem</code> é o nome do item que libera o celular. Deixe vazio (<code>''</code>) para todo mundo ter celular sem item. O padrão <code>celular</code> serve para bases vRP; em ESX e QBCore o item costuma se chamar <code>phone</code>.</p>
+<h2 id="4-fotos-e-vídeos">4. Fotos e vídeos</h2>
+<div class="table-wrap"><table><thead><tr><th><code>Config.Storage</code></th><th>Como funciona</th><th>O que configurar</th></tr></thead><tbody><tr><td><code>local</code></td><td>arquivos ficam em <code>resources/goat-phone/storage/photos</code> e são servidos pelo próprio FXServer</td><td>em produção, <code>Config.PublicUrl</code> com o endereço <strong>https</strong> do servidor (domínio ou proxy). O endereço automático do cfx.re nem sempre responde, e aí as fotos só abrem na máquina do servidor</td></tr><tr><td><code>fivemanage</code></td><td>arquivos vão para o Fivemanage</td><td><code>set phone_fivemanage_key &quot;sua-chave&quot;</code> no <code>server.cfg</code></td></tr></tbody></table></div>
+<p><code>Config.AllowedImageHosts</code> lista os domínios aceitos em fotos de perfil e anexos colados por link.</p>
+<h2 id="5-permissões-de-administração">5. Permissões de administração</h2>
+<p>Os painéis <code>/toktokadmin</code> e <code>/gramadmin</code> e a moderação da Darkweb conferem permissões pela bridge:</p>
+<ul><li><strong>ESX e QBCore:</strong> vale a ACE com o nome da permissão ou um grupo de <code>Config.Bridge.adminGroups</code> (padrão <code>admin</code>, <code>superadmin</code> e <code>god</code>). No QBCore, também vale a permissão do próprio framework.</li><li><strong>vRP:</strong> vale a permissão do vRP com o mesmo nome.</li><li><strong>Standalone:</strong> ninguém tem permissão de admin.</li></ul>
+<p>Exemplo de ACE no <code>server.cfg</code>:</p>
+<pre><code>add_ace group.admin toktok.admin.moderation allow
+add_ace group.admin goatgram.admin.reports allow
+add_ace group.admin goatphone.darkweb.admin allow</code></pre>
+<p>Os nomes ficam em <code>Config.TokTokAdminPermissions</code>, <code>Config.GoatgramAdminPermissions</code> e <code>Config.Darkweb.adminPermission</code>.</p>
+<h2 id="6-operadora">6. Operadora</h2>
+<p>O plano de dados é opcional e começa desligado. Para ligar, use <code>Config.Carrier.enabled = true</code> e ajuste planos, preços e consumo em <code>Config.Carrier</code> (<a href="configuracao.html#operadora-configcarrier">Configuração</a>). Cada personagem novo ganha <code>welcomeDataMb</code> de boas-vindas. Depois disso, quem fica sem dados perde o acesso aos apps de internet até contratar um plano no app Operadora. Ligações e SMS continuam funcionando.</p>
+<h2 id="7-cobertura-e-modo-avião">7. Cobertura e modo avião</h2>
+<p>O modo avião corta ligações, SMS e internet de verdade. A cobertura por antenas é opcional e começa desligada: com <code>Config.Coverage.enabled = true</code>, o sinal depende das antenas do mapa, que podem ser sabotadas e reparadas. A lista padrão de antenas tem coordenadas aproximadas; para ajustar ao seu mapa e ligar a sabotagem em cada antena, veja <a href="configuracao.html#cobertura-configcoverage">Configuração</a>. Dê a permissão de reparo a quem deve consertar antenas:</p>
+<pre><code>add_ace group.mechanic goatphone.towers.repair allow</code></pre>
+<h2 id="8-wi-fi">8. Wi-Fi</h2>
+<p>O Wi-Fi também começa desligado. Com <code>Config.Wifi.enabled = true</code>, cadastre as redes dos lugares do seu mapa em <code>Config.Wifi.networks</code> (<a href="configuracao.html#wi-fi-configwifi">Configuração</a>). As coordenadas de exemplo são aproximadas.</p>
+<h2 id="9-bateria">9. Bateria</h2>
+<p>A bateria começa desligada. Com <code>Config.Battery.enabled = true</code>, crie o item de <code>Config.Battery.powerbank.item</code> no inventário do seu framework e cadastre as tomadas em <code>Config.Battery.outlets</code> (<a href="configuracao.html#bateria-configbattery">Configuração</a>).</p>
+<h2 id="10-integração-com-outros-recursos">10. Integração com outros recursos</h2>
+<div class="table-wrap"><table><thead><tr><th>Export (servidor)</th><th>Uso</th></tr></thead><tbody><tr><td><code>exports['goat-phone']:notify(source, { title, body, appId? })</code></td><td>mostra uma notificação no celular do jogador</td></tr><tr><td><code>exports['goat-phone']:getPhoneNumber(source)</code></td><td>número do celular do jogador online, ou <code>nil</code></td></tr></tbody></table></div>
+<p>Os eventos de rede do celular usam o prefixo <code>goat-phone:</code> e não devem ser disparados por outros recursos.</p>
+<h2 id="11-ajustes-que-dependem-do-servidor">11. Ajustes que dependem do servidor</h2>
+<ul><li><strong>Menu de ESC customizado:</strong> com o celular aberto, o jogador continua andando (<code>SetNuiFocusKeepInput</code>), então atalhos de outros recursos ainda disparam. Menus de ESC e atalhos próprios do servidor precisam checar <code>IsNuiFocused()</code> antes de abrir.</li><li><strong>Outro celular instalado:</strong> desligue o antigo. Os eventos do Goat Phone têm prefixo próprio, mas os dois disputariam a mesma tecla e o mesmo item.</li><li><strong>Tecla:</strong> <code>Config.Command</code> e <code>Config.DefaultKey</code> definem o comando e a tecla padrão. Cada jogador pode trocar a tecla em Configurações &gt; Teclas do FiveM.</li></ul>
+<h2 id="12-atualizar">12. Atualizar</h2>
+<ol><li>Pare o servidor ou dê <code>stop goat-phone</code>.</li><li>Substitua a pasta, <strong>mantendo o seu <code>config.lua</code></strong>. Compare com o <code>config.lua</code> novo e copie as opções que aparecerem; as que faltarem usam o padrão.</li><li>Se o <code>fxmanifest.lua</code> mudou, rode <code>refresh</code> antes do <code>ensure goat-phone</code>.</li><li>As migrations novas rodam sozinhas no próximo início. O que mudou em cada versão está no CHANGELOG.md.</li></ol>
+      </main>
+    </div>
+    <footer class="footer">
+      <span>© Goat Phone</span>
+      <span>Feito para FiveM</span>
+    </footer>
+  </body>
+</html>
