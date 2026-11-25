@@ -551,6 +551,35 @@ h3 {
   font-size: 0.9375rem;
 }
 
+.perf {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perf li {
+  padding: 2rem 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.perf strong {
+  display: block;
+  color: #30d158;
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.perf span {
+  color: var(--muted);
+}
+
 .features {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -629,6 +658,22 @@ h3 {
   font-size: 0.875rem;
 }
 
+.cta-prices s {
+  color: #71717a;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.cta .cta-switch {
+  margin: -0.5rem auto 1.5rem;
+  font-size: 1rem;
+}
+
+.cta-switch a {
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
 .cta-actions {
   display: flex;
   flex-wrap: wrap;
@@ -676,6 +721,7 @@ h3 {
 }
 
 @media (max-width: 600px) {
+  .perf,
   .ride-grid,
   .showcase,
   .features,
