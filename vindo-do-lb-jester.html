@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vindo do LB Phone ou do Smartphone do Jester? — Goat Phone</title>
+    <meta
+      name="description"
+      content="Troque o LB Phone ou o Smartphone do Jester pelo Goat Phone sem perder dados: migração automática de contatos, mensagens, fotos e redes sociais, e os scripts do servidor continuam funcionando."
+    />
+    <meta property="og:title" content="Vindo do LB Phone ou do Jester? — Goat Phone" />
+    <meta
+      property="og:description"
+      content="Migração automática dos dados dos jogadores e compatibilidade com os exports do celular antigo. Troque em uma tarde."
+    />
+    <meta property="og:image" content="assets/tela-home.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">G</span>
+        Goat Phone
+      </a>
+      <nav class="topnav">
+        <a href="#passos">Como trocar</a>
+        <a href="#dados">O que vem junto</a>
+        <a href="#scripts">Scripts</a>
+        <a href="#perguntas">Perguntas</a>
+        <a class="button button-small" href="index.html#adquirir">Adquirir</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero switch-hero" id="inicio">
+        <div class="hero-copy">
+          <p class="eyebrow">Vindo do LB Phone ou do Smartphone do Jester?</p>
+          <h1>Troque de celular sem os jogadores perderem nada.</h1>
+          <p class="lead">
+            O Goat Phone encontra os dados do celular antigo sozinho e traz contatos, conversas,
+            fotos e contas sociais de cada jogador. Os scripts do servidor que chamavam o celular
+            antigo continuam funcionando, sem mudar uma linha.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="index.html#adquirir">Quero trocar</a>
+            <a class="button button-ghost" href="#passos">Ver como funciona</a>
+          </div>
+          <ul class="hero-facts">
+            <li><strong>0</strong> comandos para digitar</li>
+            <li><strong>0</strong> linhas apagadas do banco</li>
+            <li><strong>1</strong> clique para migrar</li>
+          </ul>
+        </div>
+        <div class="switch-visual" aria-hidden="true">
+          <div class="switch-from">
+            <span>LB Phone</span>
+            <span>Smartphone do Jester</span>
+          </div>
+          <div class="switch-arrow"></div>
+          <div class="phone switch-phone">
+            <img src="assets/tela-home.webp" alt="" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="passos">
+        <div class="section-head">
+          <p class="eyebrow">Como trocar</p>
+          <h2>Uma tarde, três passos.</h2>
+          <p>Sem planilha, sem script de conversão, sem pedir para os jogadores refazerem tudo.</p>
+        </div>
+        <ol class="steps">
+          <li>
+            <span class="step-number">1</span>
+            <h3>Instale e desligue o antigo</h3>
+            <p>
+              Coloque o Goat Phone no mesmo banco, tire o celular antigo do <code>server.cfg</code>
+              e inicie o servidor. As tabelas são criadas sozinhas.
+            </p>
+          </li>
+          <li>
+            <span class="step-number">2</span>
+            <h3>Clique em Migrar agora</h3>
+            <p>
+              Ao entrar no jogo, o admin vê uma janela com quantos jogadores e registros de cada app
+              foram encontrados. Um clique, barra de progresso e relatório no fim.
+            </p>
+          </li>
+          <li>
+            <span class="step-number">3</span>
+            <h3>Os jogadores abrem e está tudo lá</h3>
+            <p>
+              Cada um abre o Goat Phone com o mesmo número, os contatos, as conversas, as fotos e os
+              seguidores que tinha. Os scripts de emprego, polícia e HUD seguem funcionando.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section" id="dados">
+        <div class="section-head">
+          <p class="eyebrow">O que vem junto</p>
+          <h2>Cada app antigo tem um lugar no Goat Phone.</h2>
+          <p>
+            A migração só lê as tabelas do celular antigo. Nada é apagado, e uma queda no meio não
+            duplica nada: a nova tentativa continua do último lote gravado.
+          </p>
+        </div>
+        <table class="map-table" aria-label="O que é migrado de cada celular">
+          <thead>
+            <tr class="map-row map-head">
+              <th scope="col">No Goat Phone</th>
+              <th scope="col">Do LB Phone</th>
+              <th scope="col">Do Smartphone do Jester</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="map-row">
+              <th scope="row">Número, perfil e bloqueios</th>
+              <td data-label="LB Phone" class="yes">Sim, com o código de desbloqueio</td>
+              <td data-label="Jester" class="yes">Sim</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Contatos e recentes</th>
+              <td data-label="LB Phone" class="yes">Sim</td>
+              <td data-label="Jester" class="yes">Sim</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Fotos e vídeos</th>
+              <td data-label="LB Phone" class="yes">Sim</td>
+              <td data-label="Jester" class="yes">Sim</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Notas</th>
+              <td data-label="LB Phone" class="yes">Sim</td>
+              <td data-label="Jester" class="no">Não existe no Jester</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Mensagens</th>
+              <td data-label="LB Phone" class="yes">SMS e grupos</td>
+              <td data-label="Jester" class="no">Não existe no Jester</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Zap</th>
+              <td data-label="LB Phone" class="no">Não existe no LB</td>
+              <td data-label="Jester" class="yes">WhatsApp: conversas, grupos, fotos e localização</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Goatgram</th>
+              <td data-label="LB Phone" class="yes">InstaPic: contas, posts, seguidores e direct</td>
+              <td data-label="Jester" class="yes">Instagram: perfis, posts, seguidores e curtidas</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Piu</th>
+              <td data-label="LB Phone" class="yes">Birdy: posts, respostas, retweets e seguidores</td>
+              <td data-label="Jester" class="yes">Twitter: tweets, respostas, retweets e seguidores</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">TokTok</th>
+              <td data-label="LB Phone" class="yes">Trendy: vídeos, comentários, salvos e mensagens</td>
+              <td data-label="Jester" class="no">Não existe no Jester</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Darkweb</th>
+              <td data-label="LB Phone" class="yes">DarkChat: identidades, canais e mensagens</td>
+              <td data-label="Jester" class="yes">TOR: canal geral e conversas privadas</td>
+            </tr>
+            <tr class="map-row">
+              <th scope="row">Goat Ride</th>
+              <td data-label="LB Phone" class="no">Não existe no LB</td>
+              <td data-label="Jester" class="yes">Uber: histórico de corridas e avaliações</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="map-note">
+          O LB costuma gerar números próprios. Se o número do framework for outro, a migração
+          traduz contatos, recentes e conversas para os números novos. Dinheiro, banco e cripto
+          continuam no framework, como sempre estiveram.
+        </p>
+      </section>
+
+      <section class="section section-alt" id="scripts">
+        <div class="sdk">
+          <div class="sdk-copy">
+            <p class="eyebrow">Scripts do servidor</p>
+            <h2>O que chamava o celular antigo continua funcionando.</h2>
+            <p class="sdk-lead">
+              O Goat Phone responde pelos mesmos nomes do celular antigo. Emprego que manda SMS,
+              chamado da polícia com botão de ligar, HUD que esconde com o celular aberto: tudo
+              segue igual depois da troca.
+            </p>
+            <ul class="sdk-points">
+              <li>
+                <strong>LB Phone</strong>
+                <span>Notificações, SMS, abrir e fechar, bloquear, ligar, número do jogador e o evento <code>lb-phone:phoneToggled</code>.</span>
+              </li>
+              <li>
+                <strong>Smartphone do Jester</strong>
+                <span><code>open</code>, <code>close</code>, <code>callPlayer</code>, <code>getWhatsappAvatar</code>, <code>smartphone:createSMS</code> e o evento <code>status:celular</code>.</span>
+              </li>
+              <li>
+                <strong>Liga e desliga na config</strong>
+                <span>Cada camada tem a própria chave em <code>Config.Compat</code>.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="code-card">
+            <div class="code-tabs">
+              <span class="code-dot"></span>
+              <span class="code-dot"></span>
+              <span class="code-dot"></span>
+              <span class="code-file">seu-emprego/server.lua</span>
+            </div>
+            <pre><code><span class="tok-fn">exports</span>[<span class="tok-str">'lb-phone'</span>]:<span class="tok-fn">SendNotification</span>(source, {
+  app = <span class="tok-str">'Messages'</span>,
+  title = <span class="tok-str">'Central'</span>,
+  content = <span class="tok-str">'Nova entrega disponível'</span>,
+})
+
+<span class="tok-fn">TriggerClientEvent</span>(<span class="tok-str">'smartphone:createSMS'</span>, source,
+  <span class="tok-str">'iFood'</span>, <span class="tok-str">'Pedido pronto para retirada'</span>)</code></pre>
+            <div class="code-tabs code-tabs-inner">
+              <span class="code-file">sua-hud/client.lua</span>
+            </div>
+            <pre><code><span class="tok-fn">exports</span>.smartphone:<span class="tok-fn">callPlayer</span>(<span class="tok-str">'555-0190'</span>)
+
+<span class="tok-fn">AddEventHandler</span>(<span class="tok-str">'status:celular'</span>, <span class="tok-kw">function</span>(aberto)
+  <span class="tok-fn">DisplayRadar</span>(<span class="tok-kw">not</span> aberto)
+<span class="tok-kw">end</span>)</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="ganhos">
+        <div class="section-head">
+          <p class="eyebrow">O que você ganha a mais</p>
+          <h2>Mesmo dia a dia, celular novo.</h2>
+        </div>
+        <div class="features">
+          <article>
+            <h3>Qualquer framework</h3>
+            <p>vRP, ESX, QBCore ou standalone pela mesma ponte. Mudou de base, o celular vai junto.</p>
+          </article>
+          <article>
+            <h3>Apps próprios</h3>
+            <p>Banco, polícia ou delivery viram apps do celular com um export e HTML, sem mexer no código do Goat Phone.</p>
+          </article>
+          <article>
+            <h3>TokTok e Goatgram completos</h3>
+            <p>Estúdio de vídeo, LIVE com presentes e câmera traseira, stories, reels e direct.</p>
+          </article>
+          <article>
+            <h3>Goat Ride</h3>
+            <p>Corridas entre jogadores, com mapa, preço fechado, gorjeta e ganhos do motorista.</p>
+          </article>
+          <article>
+            <h3>Darkweb com garantia</h3>
+            <p>Identidades anônimas, mercado, contratos, canais, reputação e painel de admin.</p>
+          </article>
+          <article>
+            <h3>Operadora e sinal</h3>
+            <p>Plano de dados, cobertura por antenas, Wi-Fi e bateria, cada um opcional.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="perguntas">
+        <div class="section-head">
+          <p class="eyebrow">Perguntas</p>
+          <h2>Antes de trocar.</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Posso voltar para o celular antigo?</summary>
+            <p>Pode. A migração só lê as tabelas do celular antigo e não apaga nem altera nada nelas. Mesmo assim, faça backup do banco antes, como em qualquer atualização grande.</p>
+          </details>
+          <details>
+            <summary>E se o servidor cair no meio da migração?</summary>
+            <p>A janela mostra o erro e o botão Tentar de novo. Cada lote é gravado junto com a posição em que parou, então a nova tentativa continua de onde estava e nada é duplicado.</p>
+          </details>
+          <details>
+            <summary>Os jogadores precisam criar conta de novo?</summary>
+            <p>Não. Cada jogador fica com a conta dele no Goatgram, no Piu e no TokTok, com posts e seguidores. As senhas antigas não vêm porque cada celular guarda num formato diferente: no Goatgram e no Piu o jogador entra direto, e no TokTok define uma senha nova pela recuperação se quiser entrar em outro aparelho.</p>
+          </details>
+          <details>
+            <summary>As fotos antigas continuam abrindo?</summary>
+            <p>Continuam, enquanto o armazenamento antigo (Fivemanage ou outro) estiver no ar. A migração copia os links; basta incluir os domínios em <code>Config.AllowedImageHosts</code>.</p>
+          </details>
+          <details>
+            <summary>Funciona com o Smartphone do Jester em ESX ou QBCore?</summary>
+            <p>O Smartphone do Jester guarda os dados no <code>user_id</code> do vRP, então a migração dele roda com a bridge vRP ou vRP Creative. O LB Phone migra em qualquer framework.</p>
+          </details>
+          <details>
+            <summary>Apps que criei para o celular antigo funcionam?</summary>
+            <p>Apps personalizados do LB (<code>AddCustomApp</code>) e do Jester (<code>createApp</code>) não são convertidos. O Goat Phone tem o próprio SDK de apps, com HTML, CSS e JavaScript e um export para registrar, e a documentação traz um app de exemplo para começar.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="cta" id="adquirir">
+        <h2>Pronto para trocar?</h2>
+        <p>Compre a licença, siga o guia de migração e abra o servidor com o Goat Phone no mesmo dia. A instalação tem suporte.</p>
+        <div class="cta-actions">
+          <a class="button" href="index.html#adquirir">Ver preços e lojas</a>
+          <a class="button button-ghost" href="docs/index.html">Ler a documentação</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>© Goat Phone</span>
+      <a href="index.html">Página inicial</a>
+      <span>LB Phone e Smartphone do Jester são produtos de seus respectivos autores.</span>
+    </footer>
+  </body>
+</html>
