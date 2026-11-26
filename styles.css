@@ -1000,3 +1000,35 @@ code {
     margin-right: 0.35rem;
   }
 }
+
+.replace-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 64rem;
+  margin: 3rem auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.replace-list li {
+  padding: 1.25rem 1.375rem;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.03);
+  color: var(--muted, #a1a1aa);
+  line-height: 1.5;
+}
+
+.replace-list strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #fff;
+  font-size: 1.0625rem;
+}
+
+@media (max-width: 720px) {
+  .replace-list {
+    grid-template-columns: 1fr;
+  }
+}
